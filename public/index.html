@@ -1,0 +1,698 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Adtech Pro | Full‑Stack Web Developer</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* ============ CSS RESET & VARIABLES ============ */
+        :root {
+            --bg-primary: #0a0a0f;
+            --bg-secondary: #12121a;
+            --bg-card: #16161f;
+            --bg-card-hover: #1c1c28;
+            --text-primary: #e8e8f0;
+            --text-secondary: #a0a0b8;
+            --text-muted: #6b6b80;
+            --accent: #6c5ce7;
+            --accent-light: #a29bfe;
+            --accent-glow: rgba(108, 92, 231, 0.35);
+            --border: #222233;
+            --border-light: #2a2a3a;
+            --success: #00d2a0;
+            --warning: #ffa94d;
+            --danger: #ff6b6b;
+            --radius-sm: 8px;
+            --radius: 14px;
+            --radius-lg: 20px;
+            --radius-xl: 28px;
+            --shadow-card: 0 4px 24px rgba(0,0,0,0.4);
+            --shadow-glow: 0 0 60px var(--accent-glow);
+            --transition: 0.3s cubic-bezier(0.4,0,0.2,1);
+            --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+            --font-mono: 'Fira Code', 'JetBrains Mono', monospace;
+            --nav-height: 70px;
+            --max-width: 1200px;
+        }
+        [data-theme="light"] {
+            --bg-primary: #f5f5fa;
+            --bg-secondary: #ffffff;
+            --bg-card: #ffffff;
+            --bg-card-hover: #f0f0f8;
+            --text-primary: #1a1a2e;
+            --text-secondary: #4a4a60;
+            --text-muted: #8888a0;
+            --accent: #5b4cdb;
+            --accent-light: #7b6fe8;
+            --accent-glow: rgba(91,76,219,0.2);
+            --border: #e0e0ec;
+            --border-light: #eeeef5;
+            --shadow-card: 0 4px 24px rgba(0,0,0,0.08);
+            --shadow-glow: 0 0 50px var(--accent-glow);
+        }
+        * { margin:0; padding:0; box-sizing:border-box; }
+        html { scroll-behavior:smooth; scroll-padding-top:var(--nav-height); }
+        body {
+            font-family:var(--font-sans);
+            background:var(--bg-primary);
+            color:var(--text-primary);
+            line-height:1.7;
+            overflow-x:hidden;
+            transition: background var(--transition), color var(--transition);
+        }
+        ::selection { background:var(--accent); color:#fff; }
+        ::-webkit-scrollbar { width:6px; }
+        ::-webkit-scrollbar-track { background:var(--bg-primary); }
+        ::-webkit-scrollbar-thumb { background:var(--border-light); border-radius:3px; }
+        ::-webkit-scrollbar-thumb:hover { background:var(--accent); }
+
+        #particle-canvas { position:fixed; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:0; opacity:0.5; }
+
+        .navbar { position:fixed; top:0; left:0; width:100%; height:var(--nav-height); z-index:1000; transition:var(--transition); background:transparent; }
+        .navbar.scrolled { background:var(--bg-secondary); backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px); border-bottom:1px solid var(--border); box-shadow:0 2px 20px rgba(0,0,0,0.3); }
+        [data-theme="light"] .navbar.scrolled { box-shadow:0 2px 20px rgba(0,0,0,0.08); }
+        .nav-container { max-width:var(--max-width); margin:0 auto; padding:0 24px; height:100%; display:flex; align-items:center; justify-content:space-between; }
+        .nav-logo { font-size:1.6rem; font-weight:800; letter-spacing:-1px; color:var(--text-primary); text-decoration:none; display:flex; align-items:center; gap:8px; z-index:1001; }
+        .nav-logo .logo-dot { width:10px; height:10px; background:var(--accent); border-radius:50%; display:inline-block; box-shadow:0 0 12px var(--accent-glow); animation:pulse-dot 2s ease-in-out infinite; }
+        @keyframes pulse-dot { 0%,100% { box-shadow:0 0 8px var(--accent-glow); } 50% { box-shadow:0 0 20px var(--accent-glow),0 0 40px var(--accent-glow); } }
+        .nav-links { display:flex; list-style:none; gap:8px; align-items:center; }
+        .nav-links a { color:var(--text-secondary); text-decoration:none; font-weight:500; font-size:0.9rem; padding:8px 16px; border-radius:50px; transition:var(--transition); letter-spacing:-0.2px; }
+        .nav-links a:hover, .nav-links a.active { color:var(--text-primary); background:var(--bg-card); }
+        .nav-actions { display:flex; gap:10px; align-items:center; z-index:1001; }
+        .btn-icon { width:40px; height:40px; border-radius:50%; border:1px solid var(--border); background:var(--bg-card); color:var(--text-secondary); cursor:pointer; display:flex; align-items:center; justify-content:center; transition:var(--transition); font-size:1rem; }
+        .btn-icon:hover { color:var(--text-primary); border-color:var(--accent); box-shadow:0 0 20px var(--accent-glow); }
+        .lang-switch { width:auto; padding:0 12px; font-weight:600; font-size:0.85rem; gap:6px; }
+        .hamburger { display:none; flex-direction:column; gap:5px; cursor:pointer; z-index:1001; background:none; border:none; padding:8px; }
+        .hamburger span { width:26px; height:2.5px; background:var(--text-primary); border-radius:2px; transition:var(--transition); }
+        .hamburger.active span:nth-child(1) { transform:rotate(45deg) translate(5px,5px); }
+        .hamburger.active span:nth-child(2) { opacity:0; }
+        .hamburger.active span:nth-child(3) { transform:rotate(-45deg) translate(5px,-5px); }
+
+        .section { position:relative; z-index:1; padding:100px 24px; max-width:var(--max-width); margin:0 auto; }
+        .section-label { display:inline-block; font-family:var(--font-mono); font-size:0.8rem; color:var(--accent-light); text-transform:uppercase; letter-spacing:2px; margin-bottom:12px; font-weight:500; }
+        .section-title { font-size:clamp(2rem,4vw,3rem); font-weight:800; letter-spacing:-1.5px; margin-bottom:16px; line-height:1.2; }
+        .section-subtitle { color:var(--text-secondary); font-size:1.05rem; max-width:600px; margin-bottom:48px; line-height:1.7; }
+
+        .hero { min-height:100vh; display:flex; align-items:center; position:relative; z-index:1; padding-top:var(--nav-height); }
+        .hero .section { width:100%; }
+        .hero-content { display:grid; grid-template-columns:1fr 1fr; gap:60px; align-items:center; }
+        .hero-text .greeting { font-family:var(--font-mono); color:var(--accent-light); font-size:0.9rem; letter-spacing:2px; margin-bottom:16px; }
+        .hero-text h1 { font-size:clamp(2.8rem,6vw,4.5rem); font-weight:900; letter-spacing:-2px; line-height:1.05; margin-bottom:12px; }
+        .hero-text h1 .highlight { background:linear-gradient(135deg, var(--accent), var(--accent-light)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+        .typing-wrapper { font-size:1.3rem; color:var(--text-secondary); margin-bottom:24px; font-weight:500; min-height:32px; }
+        .typing-wrapper .cursor { display:inline-block; width:2px; height:1.2em; background:var(--accent); margin-left:4px; vertical-align:text-bottom; animation:blink 0.8s step-end infinite; }
+        @keyframes blink { 50% { opacity:0; } }
+        .hero-text p { color:var(--text-secondary); font-size:1.05rem; max-width:480px; margin-bottom:36px; line-height:1.7; }
+        .btn-group { display:flex; gap:14px; flex-wrap:wrap; }
+        .btn { display:inline-flex; align-items:center; gap:8px; padding:14px 28px; border-radius:50px; font-weight:600; font-size:0.95rem; cursor:pointer; text-decoration:none; transition:var(--transition); letter-spacing:-0.3px; border:none; font-family:var(--font-sans); }
+        .btn-primary { background:var(--accent); color:#fff; box-shadow:0 8px 30px var(--accent-glow); }
+        .btn-primary:hover { transform:translateY(-3px); box-shadow:0 14px 40px var(--accent-glow); }
+        .btn-outline { background:transparent; color:var(--text-primary); border:1.5px solid var(--border-light); }
+        .btn-outline:hover { border-color:var(--accent); background:var(--bg-card); transform:translateY(-3px); }
+        .hero-visual { display:flex; justify-content:center; align-items:center; }
+        .hero-avatar-wrapper { position:relative; width:320px; height:320px; }
+        .hero-avatar { width:100%; height:100%; border-radius:50%; background:linear-gradient(135deg, var(--accent), #e84393); display:flex; align-items:center; justify-content:center; font-size:8rem; color:#fff; position:relative; z-index:2; box-shadow:var(--shadow-glow); animation:float 6s ease-in-out infinite; }
+        @keyframes float { 0%,100% { transform:translateY(0); } 50% { transform:translateY(-20px); } }
+        .hero-avatar-ring { position:absolute; top:-20px; left:-20px; width:calc(100% + 40px); height:calc(100% + 40px); border-radius:50%; border:2px dashed var(--border-light); animation:spin 20s linear infinite; z-index:1; }
+        @keyframes spin { to { transform:rotate(360deg); } }
+        .hero-stats { display:flex; gap:32px; margin-top:20px; }
+        .hero-stat h3 { font-size:2rem; font-weight:800; letter-spacing:-1px; }
+        .hero-stat span { color:var(--text-muted); font-size:0.85rem; }
+
+        .about-grid { display:grid; grid-template-columns:1fr 1fr; gap:60px; align-items:center; }
+        .about-text p { color:var(--text-secondary); margin-bottom:16px; font-size:1rem; line-height:1.8; }
+        .about-cards { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+        .about-card { background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius); padding:28px 22px; text-align:center; transition:var(--transition); }
+        .about-card:hover { background:var(--bg-card-hover); border-color:var(--accent); transform:translateY(-4px); box-shadow:var(--shadow-glow); }
+        .about-card .icon { font-size:2rem; margin-bottom:10px; }
+        .about-card h4 { font-weight:700; font-size:1.3rem; letter-spacing:-0.5px; }
+        .about-card span { color:var(--text-muted); font-size:0.85rem; }
+
+        .skills-grid { display:grid; grid-template-columns: repeat(auto-fit, minmax(140px,1fr)); gap:16px; }
+        .skill-card { background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius); padding:28px 18px; text-align:center; transition:var(--transition); cursor:default; }
+        .skill-card:hover { background:var(--bg-card-hover); border-color:var(--accent); transform:translateY(-6px); box-shadow:var(--shadow-glow); }
+        .skill-card .skill-icon { font-size:2.5rem; margin-bottom:12px; }
+        .skill-card h4 { font-weight:600; font-size:0.95rem; letter-spacing:-0.3px; }
+        .skill-card .skill-level { display:inline-block; font-size:0.7rem; font-family:var(--font-mono); color:var(--accent-light); margin-top:6px; padding:3px 10px; background:var(--accent-glow); border-radius:50px; }
+
+        .project-filters { display:flex; gap:10px; flex-wrap:wrap; margin-bottom:36px; }
+        .filter-btn { padding:10px 20px; border-radius:50px; border:1px solid var(--border); background:var(--bg-card); color:var(--text-secondary); cursor:pointer; transition:var(--transition); font-weight:500; font-size:0.88rem; font-family:var(--font-sans); }
+        .filter-btn.active, .filter-btn:hover { background:var(--accent); color:#fff; border-color:var(--accent); box-shadow:0 4px 20px var(--accent-glow); }
+        .projects-grid { display:grid; grid-template-columns: repeat(auto-fit, minmax(340px,1fr)); gap:24px; }
+        .project-card { background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius-lg); overflow:hidden; transition:var(--transition); position:relative; }
+        .project-card:hover { transform:translateY(-8px); box-shadow:var(--shadow-glow); border-color:var(--accent); }
+        .project-image { height:200px; background:var(--bg-card-hover); display:flex; align-items:center; justify-content:center; font-size:4rem; position:relative; overflow:hidden; }
+        .project-overlay { position:absolute; inset:0; background:linear-gradient(180deg, transparent 60%, var(--bg-card) 100%); display:flex; align-items:flex-end; padding:16px; opacity:0; transition:var(--transition); }
+        .project-card:hover .project-overlay { opacity:1; }
+        .project-links { display:flex; gap:10px; }
+        .project-links a { width:38px; height:38px; border-radius:50%; background:var(--bg-card); border:1px solid var(--border-light); display:flex; align-items:center; justify-content:center; color:var(--text-primary); transition:var(--transition); text-decoration:none; font-size:0.9rem; }
+        .project-links a:hover { background:var(--accent); border-color:var(--accent); color:#fff; }
+        .project-info { padding:22px; }
+        .project-tags { display:flex; gap:6px; flex-wrap:wrap; margin-bottom:10px; }
+        .project-tags span { font-size:0.7rem; font-family:var(--font-mono); padding:4px 10px; border-radius:50px; background:var(--accent-glow); color:var(--accent-light); }
+        .project-info h3 { font-weight:700; font-size:1.2rem; letter-spacing:-0.5px; margin-bottom:6px; }
+        .project-info p { color:var(--text-muted); font-size:0.9rem; line-height:1.5; }
+
+        .timeline { position:relative; padding-left:30px; }
+        .timeline::before { content:''; position:absolute; left:8px; top:0; bottom:0; width:2px; background:var(--border-light); }
+        .timeline-item { position:relative; margin-bottom:40px; padding-left:32px; }
+        .timeline-item::before { content:''; position:absolute; left:-26px; top:6px; width:14px; height:14px; border-radius:50%; background:var(--accent); border:3px solid var(--bg-primary); box-shadow:0 0 12px var(--accent-glow); z-index:2; }
+        .timeline-item .date { font-family:var(--font-mono); font-size:0.8rem; color:var(--accent-light); margin-bottom:4px; }
+        .timeline-item h3 { font-weight:700; font-size:1.15rem; letter-spacing:-0.4px; }
+        .timeline-item .company { color:var(--text-muted); font-size:0.9rem; margin-bottom:6px; }
+        .timeline-item p { color:var(--text-secondary); font-size:0.9rem; line-height:1.6; }
+
+        .contact-wrapper { display:grid; grid-template-columns:1fr 1fr; gap:48px; align-items:start; }
+        .contact-form { display:flex; flex-direction:column; gap:18px; }
+        .form-group { display:flex; flex-direction:column; gap:6px; }
+        .form-group label { font-weight:600; font-size:0.85rem; letter-spacing:-0.2px; color:var(--text-secondary); }
+        .form-group input, .form-group textarea { padding:14px 18px; border-radius:var(--radius-sm); border:1.5px solid var(--border); background:var(--bg-card); color:var(--text-primary); font-family:var(--font-sans); font-size:0.95rem; transition:var(--transition); resize:vertical; outline:none; }
+        .form-group input:focus, .form-group textarea:focus { border-color:var(--accent); box-shadow:0 0 0 4px var(--accent-glow); }
+        .form-group textarea { min-height:130px; }
+        .contact-info { display:flex; flex-direction:column; gap:20px; }
+        .contact-info-item { display:flex; gap:14px; align-items:flex-start; }
+        .ci-icon { width:46px; height:46px; border-radius:50%; background:var(--bg-card); border:1px solid var(--border); display:flex; align-items:center; justify-content:center; font-size:1.1rem; color:var(--accent-light); flex-shrink:0; }
+        .contact-info-item h4 { font-weight:600; font-size:0.9rem; letter-spacing:-0.3px; }
+        .contact-info-item span { color:var(--text-muted); font-size:0.85rem; }
+        .social-links { display:flex; gap:10px; margin-top:8px; }
+        .social-links a { width:42px; height:42px; border-radius:50%; border:1px solid var(--border); background:var(--bg-card); display:flex; align-items:center; justify-content:center; color:var(--text-secondary); transition:var(--transition); text-decoration:none; font-size:1rem; }
+        .social-links a:hover { background:var(--accent); border-color:var(--accent); color:#fff; box-shadow:0 0 20px var(--accent-glow); transform:translateY(-3px); }
+
+        .footer { text-align:center; padding:40px 24px; border-top:1px solid var(--border); color:var(--text-muted); font-size:0.85rem; position:relative; z-index:1; }
+        .footer i { color:#e84393; }
+
+        .toast-container { position:fixed; top:20px; right:20px; z-index:9999; display:flex; flex-direction:column; gap:10px; }
+        .toast { padding:14px 22px; border-radius:var(--radius-sm); color:#fff; font-weight:500; font-size:0.9rem; animation:slideIn 0.4s ease-out; box-shadow:0 8px 30px rgba(0,0,0,0.3); display:flex; align-items:center; gap:10px; max-width:380px; }
+        .toast.success { background:#0d7d5f; }
+        .toast.error { background:#c0392b; }
+        @keyframes slideIn { from { transform:translateX(120%); opacity:0; } to { transform:translateX(0); opacity:1; } }
+        @keyframes slideOut { from { transform:translateX(0); opacity:1; } to { transform:translateX(120%); opacity:0; } }
+
+        @media (max-width:900px) {
+            .hero-content,.about-grid,.contact-wrapper { grid-template-columns:1fr; gap:40px; }
+            .hero-visual { order:-1; }
+            .hero-avatar-wrapper { width:220px; height:220px; }
+            .hero-avatar { font-size:5rem; }
+            .hero-stats { gap:20px; justify-content:center; }
+            .nav-links { position:fixed; top:0; right:-100%; width:280px; height:100vh; background:var(--bg-secondary); flex-direction:column; padding:100px 30px 30px; gap:4px; transition:var(--transition); border-left:1px solid var(--border); box-shadow:-4px 0 30px rgba(0,0,0,0.4); }
+            .nav-links.active { right:0; }
+            .nav-links a { padding:12px 16px; font-size:1rem; width:100%; border-radius:var(--radius-sm); }
+            .hamburger { display:flex; }
+            .projects-grid { grid-template-columns:1fr; }
+        }
+        @media (max-width:500px) {
+            .section { padding:70px 16px; }
+            .hero-stats { flex-wrap:wrap; gap:16px; }
+            .btn-group { flex-direction:column; }
+            .btn { justify-content:center; }
+            .about-cards { grid-template-columns:1fr; }
+            .skills-grid { grid-template-columns:repeat(3,1fr); gap:10px; }
+            .skill-card { padding:18px 10px; }
+            .skill-card .skill-icon { font-size:1.8rem; }
+            .skill-card h4 { font-size:0.78rem; }
+        }
+    </style>
+</head>
+<body>
+    <canvas id="particle-canvas"></canvas>
+    <div class="toast-container" id="toastContainer"></div>
+
+    <nav class="navbar" id="navbar">
+        <div class="nav-container">
+            <a href="#hero" class="nav-logo">&lt;Adtechpro<span class="logo-dot"></span>/&gt;</a>
+            <ul class="nav-links" id="navLinks">
+                <li><a href="#hero" class="active" data-i18n="nav.home">Home</a></li>
+                <li><a href="#about" data-i18n="nav.about">About</a></li>
+                <li><a href="#skills" data-i18n="nav.skills">Skills</a></li>
+                <li><a href="#projects" data-i18n="nav.projects">Projects</a></li>
+                <li><a href="#experience" data-i18n="nav.experience">Experience</a></li>
+                <li><a href="#contact" data-i18n="nav.contact">Contact</a></li>
+            </ul>
+            <div class="nav-actions">
+                <button class="btn-icon lang-switch" id="langToggle" title="Switch Language" aria-label="Switch Language">
+                    <i class="fas fa-globe"></i> <span id="langText">EN</span>
+                </button>
+                <button class="btn-icon" id="themeToggle" title="Toggle theme" aria-label="Toggle theme">
+                    <i class="fas fa-moon"></i>
+                </button>
+                <button class="hamburger" id="hamburger" aria-label="Menu">
+                    <span></span><span></span><span></span>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <section class="hero" id="hero">
+        <div class="section">
+            <div class="hero-content">
+                <div class="hero-text">
+                    <p class="greeting" data-i18n="hero.greeting">👋 Hello, I'm</p>
+                    <h1>Adtech <span class="highlight">Pro</span></h1>
+                    <!-- <div class="typing-wrapper">
+                        <span id="typingTex"></span><span class="cursor">|</span>
+                    </div> -->
+                    <p data-i18n="hero.description">A passionate full-stack web developer crafting beautiful, performant, and user-centric digital experiences. I turn complex problems into elegant solutions.</p>
+                    <div class="btn-group">
+                        <a href="#projects" class="btn btn-primary"><i class="fas fa-eye"></i> <span data-i18n="hero.viewWork">View My Work</span></a>
+                        <a href="#contact" class="btn btn-outline"><i class="fas fa-paper-plane"></i> <span data-i18n="hero.getInTouch">Get In Touch</span></a>
+                    </div>
+                    <div class="hero-stats">
+                        <div class="hero-stat"><h3>3+</h3><span data-i18n="hero.stats.years">Years Exp.</span></div>
+                        <div class="hero-stat"><h3>30+</h3><span data-i18n="hero.stats.projects">Projects</span></div>
+                        <div class="hero-stat"><h3>25+</h3><span data-i18n="hero.stats.clients">Clients</span></div>
+                    </div>
+                </div>
+                <div class="hero-visual">
+                    <div class="hero-avatar-wrapper">
+                        <div class="hero-avatar-ring"></div>
+                        <div class="hero-avatar">👨‍💻</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section" id="about">
+        <span class="section-label" data-i18n="about.label">About Me</span>
+        <h2 class="section-title" data-i18n="about.title">Turning Ideas Into<br>Digital Reality</h2>
+        <p class="section-subtitle" data-i18n="about.subtitle">A bit about my journey, expertise, and what drives me to build exceptional web experiences.</p>
+        <div class="about-grid">
+            <div class="about-text">
+                <p data-i18n="about.paragraph1">I'm a full-stack developer with a deep love for clean code and stunning interfaces. My journey started 3+ years ago, and since then I've had the privilege of working with startups, agencies, and enterprise clients worldwide.</p>
+                <p data-i18n="about.paragraph2">I specialize in building scalable web applications using modern JavaScript frameworks, Node.js, and cloud technologies. When I'm not coding, you'll find me contributing to open-source projects or exploring the latest in web tech.</p>
+                <a href="#contact" class="btn btn-outline" style="margin-top:8px;"><i class="fas fa-download"></i> <span data-i18n="about.resume">Download Resume</span></a>
+            </div>
+            <div class="about-cards">
+                <div class="about-card"><div class="icon">🎯</div><h4 data-i18n="about.card1.title">Frontend</h4><span data-i18n="about.card1.sub">React, Vue, Svelte, HTML, CSS, JS, Tailwind, GSAP</span></div>
+                <div class="about-card"><div class="icon">⚙️</div><h4 data-i18n="about.card2.title">Backend</h4><span data-i18n="about.card2.sub">Node.js, PHP, Go</span></div>
+                <div class="about-card"><div class="icon">☁️</div><h4 data-i18n="about.card3.title">DevOps</h4><span data-i18n="about.card3.sub">AWS</span></div>
+                <div class="about-card"><div class="icon">🎨</div><h4 data-i18n="about.card4.title">Design</h4><span data-i18n="about.card4.sub">Figma, Tailwind, UI/UX</span></div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section" id="skills">
+        <span class="section-label" data-i18n="skills.label">Tech Stack</span>
+        <h2 class="section-title" data-i18n="skills.title">Technologies I Work With</h2>
+        <p class="section-subtitle" data-i18n="skills.subtitle">A curated set of tools and technologies I use to bring ideas to life.</p>
+        <div class="skills-grid">
+            <div class="skill-card"><div class="skill-icon">⚛️</div><h4>React</h4><span class="skill-level">Expert</span></div>
+            <div class="skill-card"><div class="skill-icon">🟢</div><h4>Node.js</h4><span class="skill-level">Expert</span></div>
+            <div class="skill-card"><div class="skill-icon">📘</div><h4>TypeScript</h4><span class="skill-level">Advanced</span></div>
+            <div class="skill-card"><div class="skill-icon">🐘</div><h4>PHP</h4><span class="skill-level">Intermediate</span></div>
+            <div class="skill-card"><div class="skill-icon">🎨</div><h4>Tailwind CSS</h4><span class="skill-level">Expert</span></div>
+            <div class="skill-card"><div class="skill-icon">🗄️</div><h4>MongoDB</h4><span class="skill-level">Advanced</span></div>
+            <div class="skill-card"><div class="skill-icon">🌐</div><h4>HTML</h4><span class="skill-level">Intermediate</span></div>
+            <div class="skill-card"><div class="skill-icon">☁️</div><h4>AWS</h4><span class="skill-level">Advanced</span></div>
+            <div class="skill-card"><div class="skill-icon">🔷</div><h4>PostgreSQL</h4><span class="skill-level">Advanced</span></div>
+            <div class="skill-card"><div class="skill-icon">🎨</div><h4>CSS</h4><span class="skill-level">Expert</span></div>
+            <div class="skill-card"><div class="skill-icon">⚡</div><h4>Next.js</h4><span class="skill-level">Expert</span></div>
+            <div class="skill-card"><div class="skill-icon">💡</div><h4>JavaScript</h4><span class="skill-level">Expert</span></div>
+        </div>
+    </section>
+
+    <section class="section" id="projects">
+        <span class="section-label" data-i18n="projects.label">Portfolio</span>
+        <h2 class="section-title" data-i18n="projects.title">Featured Projects</h2>
+        <p class="section-subtitle" data-i18n="projects.subtitle">A selection of recent work that showcases my skills and passion for building great products.</p>
+        <div class="project-filters">
+            <button class="filter-btn active" data-filter="all" data-i18n="projects.filter.all">All</button>
+            <button class="filter-btn" data-filter="frontend" data-i18n="projects.filter.frontend">Frontend</button>
+            <button class="filter-btn" data-filter="backend" data-i18n="projects.filter.backend">Backend</button>
+            <button class="filter-btn" data-filter="fullstack" data-i18n="projects.filter.fullstack">Full-Stack</button>
+        </div>
+        <div class="projects-grid" id="projectsGrid">
+            <div class="project-card" data-category="fullstack">
+                <div class="project-image" style="background:linear-gradient(135deg,#1a1a3e,#2d1b69);">💡
+                    <div class="project-overlay"><div class="project-links"><a href="https://gts.org.ng" title="Live Demo"><i class="fas fa-external-link-alt"></i></a></div></div>
+                </div>
+                <div class="project-info">
+                    <div class="project-tags"><span>php</span></div>
+                    <h3 data-i18n="projects.item1.title">Educational Platform</h3>
+                    <p data-i18n="projects.item1.desc">A full‑stack online learning platform with video courses, progress tracking, and secure payments, built to make tech education accessible and engaging.</p>
+                </div>
+            </div>
+            <div class="project-card" data-category="backend">
+                <div class="project-image" style="background:linear-gradient(135deg,#1a3a2e,#0d5c3a);">🔗
+                    <div class="project-overlay"><div class="project-links"></div></div>
+                </div>
+                <div class="project-info">
+                    <div class="project-tags"><span>Node.js</span><span>WebSocket</span><span>Redis</span></div>
+                    <h3 data-i18n="projects.item2.title">Real-Time Chat API</h3>
+                    <p data-i18n="projects.item2.desc">Scalable chat backend supporting thousands of concurrent users with message persistence.</p>
+                </div>
+            </div>
+            <div class="project-card" data-category="frontend">
+                <div class="project-image" style="background:linear-gradient(135deg,#3a1a2e,#6b1d4a);">📊
+                    <div class="project-overlay"><div class="project-links"><a href="https://gatgroupe.com" title="Live Demo"><i class="fas fa-external-link-alt"></i></a></div></div>
+                </div>
+                <div class="project-info">
+                    <div class="project-tags"><span>Vue.js</span><span>D3.js</span><span>Tailwind</span></div>
+                    <h3 data-i18n="projects.item3.title">Car Vendor Portfolio Site</h3>
+                    <p data-i18n="projects.item3.desc">Interactive data visualization dashboard with real-time updates and customizable widgets.</p>
+                </div>
+            </div>
+            <div class="project-card" data-category="fullstack">
+                <div class="project-image" style="background:linear-gradient(135deg,#2e1a3a,#5c1d6b);">🤖
+                    <div class="project-overlay"><div class="project-links"></div></div>
+                </div>
+                <div class="project-info">
+                    <div class="project-tags"><span>Next.js</span><span>OpenAI</span><span>Prisma</span></div>
+                    <h3 data-i18n="projects.item4.title">AI Content Generator</h3>
+                    <p data-i18n="projects.item4.desc">SaaS platform leveraging GPT-4 for automated content creation with team collaboration features.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section" id="experience">
+        <span class="section-label" data-i18n="experience.label">Career</span>
+        <h2 class="section-title" data-i18n="experience.title">Work Experience</h2>
+        <p class="section-subtitle" data-i18n="experience.subtitle">My professional journey and the amazing teams I've been part of.</p>
+        <div class="timeline" id="timelineContainer">
+            <div class="timeline-item">
+                <span class="date" data-i18n="experience.item1.date">2024 — 2025</span>
+                <h3 data-i18n="experience.item1.role">Senior Full-Stack Developer</h3>
+                <span class="company" data-i18n="experience.item1.company">gidetech — Remote</span>
+                <p data-i18n="experience.item1.desc">Leading a team of 8 developers building microservices architecture for a SaaS platform serving 100k+ users. Improved system performance by 40%.</p>
+            </div>
+            <div class="timeline-item">
+                <span class="date" data-i18n="experience.item2.date">2025 — Present</span>
+                <h3 data-i18n="experience.item2.role">Full-Stack Developer</h3>
+                <span class="company" data-i18n="experience.item2.company">adtechpro — Remote</span>
+                <p data-i18n="experience.item2.desc">Developed and launched 15+ client projects using React & Node.js. Implemented CI/CD pipelines reducing deployment time by 60%.</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="section" id="contact">
+        <span class="section-label" data-i18n="contact.label">Get In Touch</span>
+        <h2 class="section-title" data-i18n="contact.title">Let's Work Together</h2>
+        <p class="section-subtitle" data-i18n="contact.subtitle">Have an exciting project or opportunity? I'd love to hear from you. Drop me a message!</p>
+        <div class="contact-wrapper">
+            <form class="contact-form" id="contactForm">
+                <div class="form-group">
+                    <label for="name" data-i18n="contact.form.name">Full Name</label>
+                    <input type="text" id="name" data-i18n-placeholder="contact.form.namePlaceholder" placeholder="John Doe" required>
+                </div>
+                <div class="form-group">
+                    <label for="email" data-i18n="contact.form.email">Email Address</label>
+                    <input type="email" id="email" data-i18n-placeholder="contact.form.emailPlaceholder" placeholder="john@example.com" required>
+                </div>
+                <div class="form-group">
+                    <label for="subject" data-i18n="contact.form.subject">Subject</label>
+                    <input type="text" id="subject" data-i18n-placeholder="contact.form.subjectPlaceholder" placeholder="Project Collaboration" required>
+                </div>
+                <div class="form-group">
+                    <label for="message" data-i18n="contact.form.message">Message</label>
+                    <textarea id="message" data-i18n-placeholder="contact.form.messagePlaceholder" placeholder="Tell me about your project..." required></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary" id="submitBtn"><i class="fas fa-paper-plane"></i> <span data-i18n="contact.form.submit">Send Message</span></button>
+            </form>
+            <div class="contact-info">
+                <div class="contact-info-item"><div class="ci-icon"><i class="fas fa-envelope"></i></div><div><h4 data-i18n="contact.info.email">Email</h4><span>adtechprofessional@gmail.com</span></div></div>
+                <div class="contact-info-item"><div class="ci-icon"><i class="fas fa-map-marker-alt"></i></div><div><h4 data-i18n="contact.info.location">Location</h4><span>Abobo, Abidjan, Côte d'Ivoire</span></div></div>
+                <div class="contact-info-item"><div class="ci-icon"><i class="fas fa-clock"></i></div><div><h4 data-i18n="contact.info.availability">Availability</h4><span>Freelance</span></div></div>
+                <div class="social-links">
+                    <a href="#" title="GitHub"><i class="fab fa-github"></i></a>
+                    <a href="#" title="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+                    <a href="#" title="Twitter"><i class="fab fa-x-twitter"></i></a>
+                    <a href="#" title="Discord"><i class="fab fa-discord"></i></a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <p><span data-i18n="footer.text">© 2026 adtechpro. Built with</span> <i class="fas fa-heart"></i> <span data-i18n="footer.coffee">and lots of ☕. All rights reserved.</span></p>
+    </footer>
+
+    <script>
+        // ============ TRANSLATIONS ============
+        const translations = {
+            en: {
+                "nav.home": "Home", "nav.about": "About", "nav.skills": "Skills", "nav.projects": "Projects", "nav.experience": "Experience", "nav.contact": "Contact",
+                "hero.greeting": "👋 Hello, I'm", "hero.description": "A passionate full-stack web developer crafting beautiful, performant, and user-centric digital experiences. I turn complex problems into elegant solutions.",
+                "hero.viewWork": "View My Work", "hero.getInTouch": "Get In Touch",
+                "hero.stats.years": "Years Exp.", "hero.stats.projects": "Projects", "hero.stats.clients": "Clients",
+                "about.label": "About Me", "about.title": "Turning Ideas Into<br>Digital Reality", "about.subtitle": "A bit about my journey, expertise, and what drives me to build exceptional web experiences.",
+                "about.paragraph1": "I'm a full-stack developer with a deep love for clean code and stunning interfaces. My journey started 3+ years ago, and since then I've had the privilege of working with startups, agencies, and enterprise clients worldwide.",
+                "about.paragraph2": "I specialize in building scalable web applications using modern JavaScript frameworks, Node.js, and cloud technologies. When I'm not coding, you'll find me contributing to open-source projects or exploring the latest in web tech.",
+                "about.resume": "Download Resume",
+                "about.card1.title": "Frontend", "about.card1.sub": "React, Vue, Svelte, HTML, CSS, JS, Tailwind, GSAP",
+                "about.card2.title": "Backend", "about.card2.sub": "Node.js, PHP, Go",
+                "about.card3.title": "DevOps", "about.card3.sub": "AWS",
+                "about.card4.title": "Design", "about.card4.sub": "Figma, Tailwind, UI/UX",
+                "skills.label": "Tech Stack", "skills.title": "Technologies I Work With", "skills.subtitle": "A curated set of tools and technologies I use to bring ideas to life.",
+                "projects.label": "Portfolio", "projects.title": "Featured Projects", "projects.subtitle": "A selection of recent work that showcases my skills and passion for building great products.",
+                "projects.filter.all": "All", "projects.filter.frontend": "Frontend", "projects.filter.backend": "Backend", "projects.filter.fullstack": "Full-Stack",
+                "projects.item1.title": "Educational Platform", "projects.item1.desc": "A full‑stack online learning platform with video courses, progress tracking, and secure payments, built to make tech education accessible and engaging.",
+                "projects.item2.title": "Real-Time Chat API", "projects.item2.desc": "Scalable chat backend supporting thousands of concurrent users with message persistence.",
+                "projects.item3.title": "Car Vendor Portfolio Site", "projects.item3.desc": "Interactive data visualization dashboard with real-time updates and customizable widgets.",
+                "projects.item4.title": "AI Content Generator", "projects.item4.desc": "SaaS platform leveraging GPT-4 for automated content creation with team collaboration features.",
+                "experience.label": "Career", "experience.title": "Work Experience", "experience.subtitle": "My professional journey and the amazing teams I've been part of.",
+                "experience.item1.date": "2024 — 2025", "experience.item1.role": "Senior Full-Stack Developer", "experience.item1.company": "gidetech — Remote", "experience.item1.desc": "Leading a team of 8 developers building microservices architecture for a SaaS platform serving 100k+ users. Improved system performance by 40%.",
+                "experience.item2.date": "2025 — Present", "experience.item2.role": "Full-Stack Developer", "experience.item2.company": "adtechpro — Remote", "experience.item2.desc": "Developed and launched 15+ client projects using React & Node.js. Implemented CI/CD pipelines reducing deployment time by 60%.",
+                "contact.label": "Get In Touch", "contact.title": "Let's Work Together", "contact.subtitle": "Have an exciting project or opportunity? I'd love to hear from you. Drop me a message!",
+                "contact.form.name": "Full Name", "contact.form.namePlaceholder": "John Doe",
+                "contact.form.email": "Email Address", "contact.form.emailPlaceholder": "john@example.com",
+                "contact.form.subject": "Subject", "contact.form.subjectPlaceholder": "Project Collaboration",
+                "contact.form.message": "Message", "contact.form.messagePlaceholder": "Tell me about your project...",
+                "contact.form.submit": "Send Message",
+                "contact.info.email": "Email", "contact.info.location": "Location", "contact.info.availability": "Availability",
+                "footer.text": "© 2026 adtechpro. Built with", "footer.coffee": "and lots of ☕. All rights reserved."
+            },
+            fr: {
+                "nav.home": "Accueil", "nav.about": "À propos", "nav.skills": "Compétences", "nav.projects": "Projets", "nav.experience": "Expérience", "nav.contact": "Contact",
+                "hero.greeting": "👋 Bonjour, je suis", "hero.description": "Un développeur web full‑stack passionné qui crée des expériences numériques élégantes, performantes et centrées sur l'utilisateur. Je transforme des problèmes complexes en solutions élégantes.",
+                "hero.viewWork": "Voir mes travaux", "hero.getInTouch": "Me contacter",
+                "hero.stats.years": "Années d'exp.", "hero.stats.projects": "Projets", "hero.stats.clients": "Clients",
+                "about.label": "À propos de moi", "about.title": "Transformer les idées<br>en réalité numérique", "about.subtitle": "Un aperçu de mon parcours, de mon expertise et de ce qui me motive à créer des expériences web exceptionnelles.",
+                "about.paragraph1": "Je suis un développeur full‑stack avec un profond amour pour le code propre et les interfaces époustouflantes. Mon parcours a commencé il y a plus de 3 ans et depuis, j'ai eu le privilège de travailler avec des startups, des agences et des clients entreprises du monde entier.",
+                "about.paragraph2": "Je me spécialise dans la création d'applications web évolutives en utilisant des frameworks JavaScript modernes, Node.js et les technologies cloud. En dehors du code, vous me trouverez en train de contribuer à des projets open source ou d'explorer les dernières nouveautés du web.",
+                "about.resume": "Télécharger le CV",
+                "about.card1.title": "Frontend", "about.card1.sub": "React, Vue, Svelte, HTML, CSS, JS, Tailwind, GSAP",
+                "about.card2.title": "Backend", "about.card2.sub": "Node.js, PHP, Go",
+                "about.card3.title": "DevOps", "about.card3.sub": "AWS",
+                "about.card4.title": "Design", "about.card4.sub": "Figma, Tailwind, UI/UX",
+                "skills.label": "Stack technique", "skills.title": "Technologies que j'utilise", "skills.subtitle": "Un ensemble d'outils et de technologies que j'utilise pour donner vie aux idées.",
+                "projects.label": "Portfolio", "projects.title": "Projets en vedette", "projects.subtitle": "Une sélection de travaux récents qui mettent en valeur mes compétences et ma passion pour la création de bons produits.",
+                "projects.filter.all": "Tous", "projects.filter.frontend": "Frontend", "projects.filter.backend": "Backend", "projects.filter.fullstack": "Full‑Stack",
+                "projects.item1.title": "Plateforme éducative", "projects.item1.desc": "Une plateforme d'apprentissage en ligne full‑stack avec des cours vidéo, un suivi des progrès et des paiements sécurisés, conçue pour rendre l'éducation technologique accessible et engageante.",
+                "projects.item2.title": "API de chat en temps réel", "projects.item2.desc": "Backend de chat évolutif prenant en charge des milliers d'utilisateurs simultanés avec persistance des messages.",
+                "projects.item3.title": "Site portfolio vendeur automobile", "projects.item3.desc": "Tableau de bord interactif de visualisation de données avec mises à jour en temps réel et widgets personnalisables.",
+                "projects.item4.title": "Générateur de contenu IA", "projects.item4.desc": "Plateforme SaaS exploitant GPT‑4 pour la création de contenu automatisé avec des fonctionnalités de collaboration d'équipe.",
+                "experience.label": "Carrière", "experience.title": "Expérience professionnelle", "experience.subtitle": "Mon parcours professionnel et les équipes formidables avec lesquelles j'ai travaillé.",
+                "experience.item1.date": "2024 — 2025", "experience.item1.role": "Développeur Full‑Stack Senior", "experience.item1.company": "gidetech — Remote", "experience.item1.desc": "Diriger une équipe de 8 développeurs pour la construction d'une architecture microservices pour une plateforme SaaS servant plus de 100 000 utilisateurs. Amélioration des performances du système de 40%.",
+                "experience.item2.date": "2025 — Présent", "experience.item2.role": "Développeur Full‑Stack", "experience.item2.company": "adtechpro — Remote", "experience.item2.desc": "Développement et lancement de plus de 15 projets clients avec React & Node.js. Mise en place de pipelines CI/CD réduisant le temps de déploiement de 60%.",
+                "contact.label": "Contactez-moi", "contact.title": "Travaillons ensemble", "contact.subtitle": "Un projet ou une opportunité excitante ? J'aimerais en entendre parler. Envoyez-moi un message !",
+                "contact.form.name": "Nom complet", "contact.form.namePlaceholder": "Jean Dupont",
+                "contact.form.email": "Adresse e‑mail", "contact.form.emailPlaceholder": "jean@exemple.com",
+                "contact.form.subject": "Sujet", "contact.form.subjectPlaceholder": "Collaboration sur un projet",
+                "contact.form.message": "Message", "contact.form.messagePlaceholder": "Parlez-moi de votre projet...",
+                "contact.form.submit": "Envoyer le message",
+                "contact.info.email": "E‑mail", "contact.info.location": "Localisation", "contact.info.availability": "Disponibilité",
+                "footer.text": "© 2026 adtechpro. Construit avec", "footer.coffee": "et beaucoup de ☕. Tous droits réservés."
+            }
+        };
+
+        // Typing phrases per language
+        const typingPhrases = {
+            en: ["Full-Stack Web Developer", "UI/UX Enthusiast", "Open Source Contributor", "Problem Solver", "Tech Innovator"],
+            fr: ["Développeur Full‑Stack", "Passionné UI/UX", "Contributeur Open Source", "Résolveur de problèmes", "Innovateur technologique"]
+        };
+
+        let currentLang = localStorage.getItem('lang') || 'en';
+        let typingTimer = null;
+
+        // ============ TRANSLATE PAGE ============
+        function translatePage(lang) {
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                if (translations[lang] && translations[lang][key]) {
+                    el.innerHTML = translations[lang][key];
+                }
+            });
+            document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+                const key = el.getAttribute('data-i18n-placeholder');
+                if (translations[lang] && translations[lang][key]) {
+                    el.setAttribute('placeholder', translations[lang][key]);
+                }
+            });
+            restartTyping(lang);
+            document.getElementById('langText').textContent = lang.toUpperCase();
+        }
+
+    function restartTyping(lang) {
+    clearTimeout(typingTimer);
+    const phrases = typingPhrases[lang] || typingPhrases['en'];
+    let phraseIndex = 0, charIndex = 0, isDeleting = false;
+    const typingEl = document.getElementById('typingText');
+
+    function type() {
+        const currentPhrase = phrases[phraseIndex];
+        if (isDeleting) {
+            typingEl.textContent = currentPhrase.substring(0, charIndex - 1);
+            charIndex--;
+            // Slower deletion
+            typingTimer = setTimeout(type, 40);   // was 40
+        } else {
+            typingEl.textContent = currentPhrase.substring(0, charIndex + 1);
+            charIndex++;
+            // Slower typing
+            typingTimer = setTimeout(type, 40);  // was 90
+        }
+        if (!isDeleting && charIndex === currentPhrase.length) {
+            // Longer pause after the full phrase
+            typingTimer = setTimeout(type, 3000); // was 2000
+            isDeleting = true;
+        } else if (isDeleting && charIndex === 0) {
+            isDeleting = false;
+            phraseIndex = (phraseIndex + 1) % phrases.length;
+            typingTimer = setTimeout(type, 700);  // pause before starting next phrase
+        }
+    }
+    type();
+}
+
+
+        // ============ LANGUAGE SWITCHER ============
+        document.getElementById('langToggle').addEventListener('click', () => {
+            currentLang = currentLang === 'en' ? 'fr' : 'en';
+            localStorage.setItem('lang', currentLang);
+            translatePage(currentLang);
+        });
+
+        // ============ THEME TOGGLE ============
+        const themeToggle = document.getElementById('themeToggle');
+        const savedTheme = localStorage.getItem('theme') || 'dark';
+        document.documentElement.setAttribute('data-theme', savedTheme);
+        themeToggle.querySelector('i').className = savedTheme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
+        themeToggle.addEventListener('click', () => {
+            const current = document.documentElement.getAttribute('data-theme');
+            const next = current === 'dark' ? 'light' : 'dark';
+            document.documentElement.setAttribute('data-theme', next);
+            localStorage.setItem('theme', next);
+            themeToggle.querySelector('i').className = next === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
+        });
+
+        // ============ PARTICLES ============
+        const canvas = document.getElementById('particle-canvas');
+        const ctx = canvas.getContext('2d');
+        let particles = [], mouseX = 0, mouseY = 0;
+        function resizeCanvas() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+        resizeCanvas(); window.addEventListener('resize', () => { resizeCanvas(); initParticles(); });
+        class Particle {
+            constructor() { this.reset(); }
+            reset() {
+                this.x = Math.random()*canvas.width; this.y = Math.random()*canvas.height;
+                this.size = Math.random()*2+0.5; this.speedX = (Math.random()-0.5)*0.6; this.speedY = (Math.random()-0.5)*0.6;
+                this.opacity = Math.random()*0.5+0.15; this.life = Math.random()*300+200; this.maxLife = this.life;
+            }
+            update() {
+                this.x += this.speedX; this.y += this.speedY;
+                const dx=mouseX-this.x, dy=mouseY-this.y, dist=Math.sqrt(dx*dx+dy*dy);
+                if(dist<200) { const force=0.008; this.speedX+=(dx/dist)*force; this.speedY+=(dy/dist)*force; }
+                this.speedX*=0.999; this.speedY*=0.999; this.life--;
+                if(this.life<=0||this.x<-20||this.x>canvas.width+20||this.y<-20||this.y>canvas.height+20) { this.reset(); this.x=Math.random()*canvas.width; this.y=Math.random()*canvas.height; this.life=this.maxLife; }
+            }
+            draw() {
+                const alpha = this.opacity * (this.life/this.maxLife);
+                const isDark = document.documentElement.getAttribute('data-theme')==='dark';
+                ctx.fillStyle = isDark ? `rgba(160,155,254,${alpha})` : `rgba(91,76,219,${alpha})`;
+                ctx.beginPath(); ctx.arc(this.x,this.y,this.size,0,Math.PI*2); ctx.fill();
+            }
+        }
+        function initParticles() { const count=Math.min(Math.floor((canvas.width*canvas.height)/12000),150); particles=[]; for(let i=0;i<count;i++) particles.push(new Particle()); }
+        initParticles();
+        function animateParticles() {
+            ctx.clearRect(0,0,canvas.width,canvas.height);
+            const isDark = document.documentElement.getAttribute('data-theme')==='dark';
+            const lineColor = isDark ? 'rgba(160,155,254,0.06)' : 'rgba(91,76,219,0.04)';
+            for(let i=0;i<particles.length;i++) for(let j=i+1;j<particles.length;j++) {
+                const dx=particles[i].x-particles[j].x, dy=particles[i].y-particles[j].y, dist=Math.sqrt(dx*dx+dy*dy);
+                if(dist<130){ ctx.strokeStyle=lineColor; ctx.lineWidth=0.5; ctx.beginPath(); ctx.moveTo(particles[i].x,particles[i].y); ctx.lineTo(particles[j].x,particles[j].y); ctx.stroke(); }
+            }
+            particles.forEach(p=>{ p.update(); p.draw(); });
+            requestAnimationFrame(animateParticles);
+        }
+        animateParticles();
+        document.addEventListener('mousemove',(e)=>{ mouseX=e.clientX; mouseY=e.clientY; });
+        document.addEventListener('touchmove',(e)=>{ mouseX=e.touches[0].clientX; mouseY=e.touches[0].clientY; });
+
+        // ============ NAVIGATION ============
+        const navbar = document.getElementById('navbar');
+        const hamburger = document.getElementById('hamburger');
+        const navLinks = document.getElementById('navLinks');
+        window.addEventListener('scroll', () => {
+            if(window.scrollY>50) navbar.classList.add('scrolled'); else navbar.classList.remove('scrolled');
+            const sections = document.querySelectorAll('section[id]');
+            let current = '';
+            sections.forEach(sec => { if(window.scrollY >= sec.offsetTop-100) current = sec.getAttribute('id'); });
+            document.querySelectorAll('.nav-links a').forEach(link => {
+                link.classList.remove('active');
+                if(link.getAttribute('href')==='#'+current) link.classList.add('active');
+            });
+        });
+        hamburger.addEventListener('click', ()=>{ hamburger.classList.toggle('active'); navLinks.classList.toggle('active'); });
+        document.querySelectorAll('.nav-links a').forEach(link => link.addEventListener('click', ()=>{ hamburger.classList.remove('active'); navLinks.classList.remove('active'); }));
+
+        // ============ PROJECT FILTER ============
+        const filterBtns = document.querySelectorAll('.filter-btn');
+        filterBtns.forEach(btn => btn.addEventListener('click', () => {
+            filterBtns.forEach(b=>b.classList.remove('active')); btn.classList.add('active');
+            const filter = btn.getAttribute('data-filter');
+            document.querySelectorAll('.project-card').forEach(card => {
+                card.style.display = (filter==='all' || card.getAttribute('data-category')===filter) ? '' : 'none';
+            });
+        }));
+
+        // ============ CONTACT FORM ============
+        const contactForm = document.getElementById('contactForm');
+        const submitBtn = document.getElementById('submitBtn');
+        const toastContainer = document.getElementById('toastContainer');
+        function showToast(message, type='success') {
+            const toast = document.createElement('div'); toast.className=`toast ${type}`;
+            const icon = type==='success' ? 'fa-check-circle' : 'fa-exclamation-circle';
+            toast.innerHTML = `<i class="fas ${icon}"></i> ${message}`;
+            toastContainer.appendChild(toast);
+            setTimeout(()=>{ toast.style.animation='slideOut 0.4s ease forwards'; setTimeout(()=>toast.remove(),400); },4000);
+        }
+        contactForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const orig = submitBtn.innerHTML;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> ' + (currentLang==='fr' ? 'Envoi...' : 'Sending...');
+            submitBtn.disabled = true;
+            const formData = { name:document.getElementById('name').value.trim(), email:document.getElementById('email').value.trim(), subject:document.getElementById('subject').value.trim(), message:document.getElementById('message').value.trim() };
+            try {
+                const res = await fetch('/api/contact', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(formData) });
+                const data = await res.json();
+                showToast(res.ok ? (currentLang==='fr' ? 'Message envoyé avec succès !' : 'Message sent successfully!') : (data.error||'Something went wrong.'), res.ok?'success':'error');
+                if(res.ok) contactForm.reset();
+            } catch(err) { showToast('Network error.', 'error'); }
+            finally { submitBtn.innerHTML = orig; submitBtn.disabled = false; }
+        });
+
+        // ============ SCROLL REVEAL ============
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => { if(entry.isIntersecting) { entry.target.style.opacity='1'; entry.target.style.transform='translateY(0)'; } });
+        }, { threshold:0.15 });
+        document.querySelectorAll('.skill-card,.project-card,.about-card,.timeline-item,.contact-info-item').forEach(el => {
+            el.style.opacity='0'; el.style.transform='translateY(30px)'; el.style.transition='opacity 0.6s ease, transform 0.6s ease'; observer.observe(el);
+        });
+
+        // Smooth scroll
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => anchor.addEventListener('click', function(e) {
+            const target = document.querySelector(this.getAttribute('href'));
+            if(target) { e.preventDefault(); target.scrollIntoView({ behavior:'smooth' }); }
+        }));
+
+        // Initialise language
+        translatePage(currentLang);
+    </script>
+</body>
+</html>

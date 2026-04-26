@@ -1,0 +1,94 @@
+{
+  "hero": {
+    "name": "Alex Morgan",
+    "greeting": "👋 Hello, I'm",
+    "highlight": "Morgan",
+    "titles": [
+      "Full-Stack Web Developer",
+      "UI/UX Enthusiast",
+      "Problem Solver"
+    ],
+    "description": "A passionate full-stack web developer crafting beautiful, performant, and user‑centric digital experiences.",
+    "stats": {
+      "years": "5+",
+      "projects": "40+",
+      "clients": "25+"
+    }
+  },
+  "about": {
+    "paragraphs": [
+      "I'm a full-stack developer with a deep love for clean code...",
+      "I specialize in building scalable web applications..."
+    ],
+    "cards": [
+      {
+        "icon": "🎯",
+        "title": "Frontend",
+        "subtitle": "React, Vue, Svelte"
+      },
+      {
+        "icon": "⚙️",
+        "title": "Backend",
+        "subtitle": "Node.js, Python, Go"
+      },
+      {
+        "icon": "☁️",
+        "title": "DevOps",
+        "subtitle": "AWS, Docker, CI/CD"
+      },
+      {
+        "icon": "🎨",
+        "title": "Design",
+        "subtitle": "Figma, Tailwind, UI/UX"
+      }
+    ]
+  },
+  "skills": [
+    {
+      "name": "React",
+      "level": "Expert",
+      "icon": "⚛️"
+    },
+    {
+      "name": "Node.js",
+      "level": "Expert",
+      "icon": "🟢"
+    },
+    {
+      "name": "TypeScript",
+      "level": "Advanced",
+      "icon": "📘"
+    }
+  ],
+  "projects": [
+    {
+      "id": 1,
+      "title": "E-Commerce Platform",
+      "description": "Full-featured online store...",
+      "category": "fullstack",
+      "tags": [
+        "React",
+        "Node.js",
+        "Stripe"
+      ],
+      "gradient": "linear-gradient(135deg,#1a1a3e,#2d1b69)",
+      "links": {
+        "demo": "#",
+        "github": "#"
+      }
+    }
+  ],
+  "experience": [
+    {
+      "date": "2024 — Present",
+      "role": "Senior Full-Stack Developer",
+      "company": "TechNova Inc.",
+      "description": "..."
+    }
+  ],
+  "contact": {
+    "email": "alex.morgan@example.com",
+    "location": "San Francisco, CA",
+    "availability": "Freelance & Full-time"
+  }
+}
